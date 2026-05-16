@@ -1,0 +1,6 @@
+openpyxl
+selectolax
+shiny
+shinylive
+pandas
+requests
