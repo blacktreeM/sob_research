@@ -197,9 +197,9 @@ try:
     # Clean up column outputs and map missing keys cleanly to "Unrated"
     df_final['ABDC Rating'] = df_final['Assigned_Rating'].fillna("Unrated")
     
-    # Drop temporary processing metrics keys
+    # Drop temporary processing metrics keys (TYPO FIXED HERE)
     if 'Assigned_Rating' in df_final.columns:
-        git_df_final = df_final.drop(columns=['Assigned_Rating'])
+        df_final = df_final.drop(columns=['Assigned_Rating'])
     df_final = df_final.drop(columns=['match_key'])
     
     # Sort chronologically by year descending
