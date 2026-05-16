@@ -127,7 +127,6 @@ if not df.empty:
     print("\nExtraction fully complete! Saved to 'faculty_publications.csv'")
 else:
     print("\nExecution finished, but output table is empty.")
-
 # ---------------------------------------------------------
 # Part 1: Filter Publications (2022 or Later)
 # ---------------------------------------------------------
@@ -136,7 +135,7 @@ df['Publication Year'] = pd.to_numeric(df['Publication Year'], errors='coerce')
 df_filtered = df[df['Publication Year'] >= 2022].copy()
 
 # ---------------------------------------------------------
-# Part 2: Extract Clean Journal Names
+# Part 2: Extract Clean Journal Names & Drop Blanks
 # ---------------------------------------------------------
 print("Standardizing journal columns...")
 
@@ -153,8 +152,33 @@ def clean_journal_name(text):
 
 df_filtered['Journal Name'] = df_filtered['Journal Name'].apply(clean_journal_name)
 
+# Drop entries where Journal Name is NaN or completely empty
+df_filtered = df_filtered[df_filtered['Journal Name'].notna() & (df_filtered['Journal Name'] != "")]
+
 # ---------------------------------------------------------
-# Part 3: Fetch and Parse ABDC Reference Sheet
+# Part 3: Deduplicate and Merge Coauthors Into a Single Row
+# ---------------------------------------------------------
+print("Consolidating coauthored publications...")
+
+# Create normalized keys specifically to group duplicates accurately (ignoring casing/whitespace)
+df_filtered['_norm_title'] = df_filtered['Article Name'].astype(str).str.lower().str.strip()
+df_filtered['_norm_journal'] = df_filtered['Journal Name'].astype(str).str.lower().str.strip()
+
+# Group by the normalized fields to merge names, while pulling the first available match for other metrics
+df_grouped = df_filtered.groupby(['_norm_title', '_norm_journal']).agg({
+    'Faculty Name': lambda x: ", ".join(sorted(list(set(x.dropna().astype(str))))),
+    'Article Name': 'first',
+    'Journal Name': 'first',
+    'Abstract': 'first',
+    'Publication Year': 'first'
+}).reset_index(drop=True)
+
+# Rename the merged list column to "Faculty"
+df_grouped = df_grouped.rename(columns={'Faculty Name': 'Faculty'})
+df_filtered = df_grouped
+
+# ---------------------------------------------------------
+# Part 4: Fetch and Parse ABDC Reference Sheet
 # ---------------------------------------------------------
 print("Downloading latest ABDC Master Journal List...")
 abdc_url = "https://abdc.edu.au/wp-content/uploads/2026/03/ABDC-JQL-2025-v1-260326.xlsx"
@@ -170,7 +194,7 @@ try:
     abdc_clean.columns = ['ABDC_Journal_Title', 'Assigned_Rating']
     
     # ---------------------------------------------------------
-    # Part 4: Match-Key Normalization Engine (Exact matches except for "The")
+    # Part 5: Match-Key Normalization Engine (Exact matches except for "The")
     # ---------------------------------------------------------
     def build_strict_key(series):
         return (series.astype(str)
@@ -189,7 +213,7 @@ try:
     abdc_clean = abdc_clean.drop_duplicates(subset=['match_key'])
     
     # ---------------------------------------------------------
-    # Part 5: Execute Left Merge (Strict Equality Only)
+    # Part 6: Execute Left Merge (Strict Equality Only)
     # ---------------------------------------------------------
     print("Aligning rankings via strict equality map...")
     df_final = pd.merge(df_filtered, abdc_clean[['match_key', 'Assigned_Rating']], on='match_key', how='left')
@@ -197,7 +221,7 @@ try:
     # Clean up column outputs and map missing keys cleanly to "Unrated"
     df_final['ABDC Rating'] = df_final['Assigned_Rating'].fillna("Unrated")
     
-    # Drop temporary processing metrics keys (TYPO FIXED HERE)
+    # Drop temporary processing metrics keys
     if 'Assigned_Rating' in df_final.columns:
         df_final = df_final.drop(columns=['Assigned_Rating'])
     df_final = df_final.drop(columns=['match_key'])
@@ -216,6 +240,21 @@ except Exception as e:
 # Save the raw data tracking file
 df.to_csv("data.csv", index=False)
 print("Data matrix updated.")
+
+# Fix the Publication Year decimal issue
+if "Publication Year" in df.columns:
+    df["Publication Year"] = df["Publication Year"].astype(str).str.replace(r"\.0$", "", regex=True)
+    df["Publication Year"] = df["Publication Year"].replace("nan", "")
+
+# Convert the "Abstract" column into clickable HTML links
+if "Abstract" in df.columns:
+    df['Abstract'] = df['Abstract'].apply(
+        lambda x: f'<a href="{x}" target="_blank">View Abstract</a>' if pd.notnull(x) and str(x).startswith('http') else x
+    )
+
+# Add a row number column at the start (starting from 1)
+df.insert(0, "#", range(1, len(df) + 1))
+
 
 # ---------------------------------------------------------
 # NEW ISOLATION EXPORT PIPELINE
