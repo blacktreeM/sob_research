@@ -1,7 +1,7 @@
 # f64115a7dae86ae150769602280d8e7f
-!pip install openpyxl
-!pip install selectolax
-!pip install shiny shinylive
+#!pip install openpyxl
+#!pip install selectolax
+#!pip install shiny shinylive
 import time
 import requests
 import pandas as pd
