@@ -225,7 +225,7 @@ df.insert(0, "#", range(1, len(df) + 1))
 df.to_csv("data.csv", index=False)
 print("Data matrix updated.")
 
-# Automatically trigger the shinylive build right after scraping
+# Automatically trigger the shinylive build using the explicit app requirements file
 import os
-os.system("shinylive export . docs")
-print("Shinylive static site compiled into /docs folder.")
+os.system("shinylive export . docs --requirements requirements_app.txt")
+print("Shinylive static site compiled successfully using browser-compatible packages!")
