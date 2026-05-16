@@ -77,7 +77,7 @@ def server(input, output, session):
         ax.set_title(title_text, fontsize=14, fontweight='bold')
         
         # Axes Labels and Scaling Controls
-        ax.set_xlabel('Publication Year', fontsize=12)
+        ax.set_xlabel('', fontsize=12)
         ax.set_ylabel('Number of Papers', fontsize=12)
         ax.set_ylim(0, 15)
         
