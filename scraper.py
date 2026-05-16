@@ -1,12 +1,11 @@
 # f64115a7dae86ae150769602280d8e7f
-#!pip install openpyxl
-#!pip install selectolax
-#!pip install shiny shinylive
 import time
 import requests
 import pandas as pd
 from selectolax.parser import HTMLParser
 import re
+import os
+import shutil
 
 def scrape_entire_scholar_profile(api_key, profile_id, faculty_name):
     publications = []
@@ -119,9 +118,6 @@ if not df.empty:
     print("\nExtraction fully complete! Saved to 'faculty_publications.csv'")
 else:
     print("\nExecution finished, but output table is empty.")
-df.head()
-import pandas as pd
-import re
 
 # ---------------------------------------------------------
 # Part 1: Filter Publications (2022 or Later)
@@ -194,7 +190,7 @@ try:
     
     # Drop temporary processing metrics keys
     if 'Assigned_Rating' in df_final.columns:
-        df_final = df_final.drop(columns=['Assigned_Rating'])
+        git_df_final = df_final.drop(columns=['Assigned_Rating'])
     df_final = df_final.drop(columns=['match_key'])
     
     # Sort chronologically by year descending
@@ -207,25 +203,35 @@ except Exception as e:
     print(f"\nProcessing failure: {e}")
     df_filtered['ABDC Rating'] = "Unrated"
     df = df_filtered.sort_values(by='Publication Year', ascending=False)
-df.to_csv("data.csv", index=False)
-# Fix the Publication Year decimal issue
-if "Publication Year" in df.columns:
-    df["Publication Year"] = df["Publication Year"].astype(str).str.replace(r"\.0$", "", regex=True)
-    df["Publication Year"] = df["Publication Year"].replace("nan", "")
 
-# Convert the "Abstract" column into clickable HTML links
-if "Abstract" in df.columns:
-    df['Abstract'] = df['Abstract'].apply(
-        lambda x: f'<a href="{x}" target="_blank">View Abstract</a>' if pd.notnull(x) and str(x).startswith('http') else x
-    )
-
-# Add a row number column at the start (starting from 1)
-df.insert(0, "#", range(1, len(df) + 1))
-# Save the raw data
+# Save the raw data tracking file
 df.to_csv("data.csv", index=False)
 print("Data matrix updated.")
 
-# Automatically trigger the shinylive build using the explicit app requirements file
-import os
-os.system("shinylive export . docs --requirements requirements_app.txt")
-print("Shinylive static site compiled successfully using browser-compatible packages!")
+# ---------------------------------------------------------
+# NEW ISOLATION EXPORT PIPELINE
+# ---------------------------------------------------------
+app_dir = "shiny_app_staging"
+os.makedirs(app_dir, exist_ok=True)
+
+# Copy ONLY the files required for the browser application
+shutil.copy("app.py", os.path.join(app_dir, "app.py"))
+shutil.copy("data.csv", os.path.join(app_dir, "data.csv"))
+
+# Drop a hyper-focused requirements file inside that clean folder
+with open(os.path.join(app_dir, "requirements.txt"), "w") as f:
+    f.write("pandas\nshiny\n")
+
+print("Created isolated staging directory for Shinylive tracking.")
+
+# Clear out the old deployment build folder to prevent cache retention
+if os.path.exists("docs"):
+    shutil.rmtree("docs")
+
+# Compile using ONLY the temporary folder context
+os.system(f"shinylive export {app_dir} docs")
+print("Shinylive static site compiled cleanly into /docs folder.")
+
+# Delete staging directory to keep repo clean
+shutil.rmtree(app_dir)
+print("Staging context clean up complete.")
