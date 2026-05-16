@@ -5,12 +5,6 @@ from shiny import App, ui
 # Read the uploaded CSV file from the repository
 data_path = Path(__file__).parent / "data.csv"
 df = pd.read_csv(data_path)
-
-# Fix the Publication Year decimal issue
-if "Publication Year" in df.columns:
-    df["Publication Year"] = df["Publication Year"].astype(str).str.replace(r"\.0$", "", regex=True)
-    df["Publication Year"] = df["Publication Year"].replace("nan", "")
-
 # Convert the "Abstract" column into clickable HTML links
 if "Abstract" in df.columns:
     df['Abstract'] = df['Abstract'].apply(
