@@ -1,4 +1,62 @@
-sob_research/
-└── .github/
-    └── workflows/
-        └── update_data.yml
+name: Scheduled Faculty Scholar Scraper
+
+on:
+  schedule:
+    # Runs at 00:00 UTC every Sunday (Adjust cron syntax as needed)
+    - cron: '0 0 * * 0'
+  workflow_dispatch:
+    # Allows you to manually trigger the scraper with a button click on GitHub
+
+permissions:
+  contents: write  # Gives the action permission to commit the new CSV back to your repo
+
+jobs:
+  scrape-and-update:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Step 1: Check out your repository code onto the runner
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    # Step 2: Set up a Python environment
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+
+    # Step 3: Cache pip dependencies to speed up subsequent runs
+    - name: Cache pip packages
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
+    # Step 4: Install dependencies
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    # Step 5: Execute the scraper script
+    - name: Run Scraper Engine
+      run: python scraper.py
+
+    # Step 6: Commit and Push the updated data.csv and /docs back to GitHub
+    - name: Commit and Push changes
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        
+        # Stage changes
+        git add data.csv docs/
+        
+        # Check if there are actual changes to commit so the build doesn't throw an error
+        if git diff --staged --quiet; then
+          echo "No changes detected in faculty data. Skipping commit."
+        else
+          git commit -m "Automated Weekly Faculty Data & Shinylive Rebuild [skip ci]"
+          git push
+        fi
