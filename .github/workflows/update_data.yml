@@ -3,7 +3,7 @@ name: Scheduled Faculty Scholar Scraper
 on:
   schedule:
     # Runs at 00:00 UTC every Sunday (Adjust cron syntax as needed)
-    - cron: '0 0 * * 0'
+    - cron: '0 0 1 * *' # Runs at 00:00 UTC on the 1st day of every month
   workflow_dispatch:
     # Allows you to manually trigger the scraper with a button click on GitHub
 
