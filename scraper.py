@@ -240,7 +240,7 @@ except Exception as e:
 # Save the raw data tracking file
 df.to_csv("data.csv", index=False)
 print("Data matrix updated.")
-
+print("\nExtraction and data cleaning fully complete!")
 # Fix the Publication Year decimal issue
 if "Publication Year" in df.columns:
     df["Publication Year"] = df["Publication Year"].astype(str).str.replace(r"\.0$", "", regex=True)
