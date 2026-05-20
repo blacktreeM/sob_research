@@ -83,7 +83,7 @@ if not yearly_grouped.empty:
     total_papers = int(yearly_grouped['Total'].sum())
     total_abdc = int(yearly_grouped['Rated'].sum())
     
-    chart_title = f"Number of Papers Published, {min_year} - {max_year} (total = {total_papers}), [total ABDC journal = {total_abdc}]"
+    chart_title = f"Number of Papers Published, {min_year} - {max_year} (total = {total_papers}, total ABDC journal = {total_abdc})"
     chart_labels = [str(int(yr)) for yr in yearly_grouped.index]
     chart_data_total = [int(val) for val in yearly_grouped['Total'].values]
     chart_data_rated = [int(val) for val in yearly_grouped['Rated'].values]
@@ -181,7 +181,7 @@ html_template = """<!DOCTYPE html>
                         borderWidth: 1
                     },
                     {
-                        label: 'ABDC Rated (A*, A, B, C)',
+                        label: 'ABDC Rated',
                         data: __CHART_DATA_RATED__,
                         backgroundColor: 'rgba(49, 151, 149, 0.75)',
                         borderColor: 'rgba(35, 78, 82, 1)',
