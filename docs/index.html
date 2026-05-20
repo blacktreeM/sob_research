@@ -9,8 +9,10 @@
         body { font-family: "Inter", sans-serif; background-color: #f8f9fa; color: #333; padding: 40px 20px; margin: 0; }
         .container { max-width: 1200px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
         h1 { color: #1a365d; border-bottom: 2px solid #e2e8f0; padding-bottom: 15px; margin-top: 0; margin-bottom: 30px; }
+        h2 { color: #2c5282; margin-top: 40px; margin-bottom: 20px; font-size: 1.4em; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px; }
         .table-container { overflow-x: auto; margin-bottom: 40px; }
-        table { width: 100%%; border-collapse: collapse; min-width: 800px; }
+        table { width: 100%%; border-collapse: collapse; min-width: 800px; margin-bottom: 10px; }
+        .summary-table { min-width: 300px; max-width: 500px; }
         th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #e2e8f0; vertical-align: top; }
         th { background-color: #ebf8ff; color: #2b6cb0; font-weight: 600; }
         tr:hover { background-color: #f7fafc; }
@@ -43,6 +45,23 @@
             </table>
         </div>
         
+        <hr style="border: 0; border-top: 2px solid #e2e8f0; margin: 40px 0;">
+        
+        <h2>Number of Publications since 2022</h2>
+        <div class="table-container">
+            <table class="summary-table">
+                <thead>
+                    <tr>
+                        <th>Faculty Member</th>
+                        <th style="width: 150px;">Total Publications</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>Masa Kuroki</td><td><strong>18</strong></td></tr><tr><td>Kuldeep Singh</td><td><strong>8</strong></td></tr><tr><td>Sidd Bhambhwani</td><td><strong>6</strong></td></tr><tr><td>Roc Huang</td><td><strong>3</strong></td></tr><tr><td>Kevin Mason, Matt Brown</td><td><strong>2</strong></td></tr><tr><td>Matt Brown</td><td><strong>1</strong></td></tr><tr><td>Wan Wei</td><td><strong>1</strong></td></tr><tr><td>Aditya Limaye, Loretta Smith</td><td><strong>1</strong></td></tr><tr><td>David Pumphrey</td><td><strong>1</strong></td></tr><tr><td>Aditya Limaye</td><td><strong>1</strong></td></tr>
+                </tbody>
+            </table>
+        </div>
+
         <hr style="border: 0; border-top: 2px solid #e2e8f0; margin: 40px 0;">
         
         <div class="chart-container">
