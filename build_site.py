@@ -46,16 +46,29 @@ for _, row in df_table.iterrows():
 # --- 2. Generate Faculty Summary Table Rows (Total Publications since 2022) ---
 summary_rows = ""
 if "Faculty" in df.columns:
-    # Count total publications per faculty member and sort descending by production volume
-    faculty_counts = df['Faculty'].value_counts().reset_index()
+    all_individual_faculty = []
+    
+    # Loop through each row and break apart coauthors
+    for faculty_entry in df['Faculty'].dropna():
+        # Split by comma in case multiple faculty members are on the same paper
+        authors = [author.strip() for author in str(faculty_entry).split(',')]
+        all_individual_faculty.extend(authors)
+        
+    # Convert our list of individual names into a clean DataFrame series count
+    faculty_series = pd.Series(all_individual_faculty)
+    faculty_counts = faculty_series.value_counts().reset_index()
     faculty_counts.columns = ['Faculty Member', 'Total Publications']
     
+    # Build out the summary table rows
     for _, row in faculty_counts.iterrows():
+        # Skip empty names if any slip through
+        if not row['Faculty Member']:
+            continue
         summary_rows += "<tr>"
         summary_rows += f"<td>{row['Faculty Member']}</td>"
         summary_rows += f"<td><strong>{row['Total Publications']}</strong></td>"
         summary_rows += "</tr>"
-
+        
 # --- 3. Calculate Data metrics for Chart.js directly ---
 raw_years = pd.to_numeric(df['Publication Year'], errors='coerce').dropna().astype(int)
 year_counts = raw_years.value_counts().sort_index()
