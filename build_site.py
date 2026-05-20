@@ -68,22 +68,38 @@ if "Faculty" in df.columns:
         summary_rows += f"<td>{row['Faculty Member']}</td>"
         summary_rows += f"<td><strong>{row['Total Publications']}</strong></td>"
         summary_rows += "</tr>"
-        
-# --- 3. Calculate Data metrics for Chart.js directly ---
-raw_years = pd.to_numeric(df['Publication Year'], errors='coerce').dropna().astype(int)
-year_counts = raw_years.value_counts().sort_index()
 
-if not year_counts.empty:
-    min_year = int(year_counts.index.min())
-    max_year = int(year_counts.index.max())
-    total_papers = int(year_counts.sum())
-    chart_title = f"Number of Papers Published, {min_year} - {max_year} (total = {total_papers})"
-    chart_labels = [str(yr) for yr in year_counts.index]
-    chart_data = [int(val) for val in year_counts.values]
+# --- 3. Calculate Grouped Data metrics for Chart.js ---
+# Clean ABDC labels to isolate rated items safely
+df['ABDC Rating'] = df['ABDC Rating'].fillna('Unrated').astype(str).str.strip()
+df['Is_ABDC_Rated'] = df['ABDC Rating'].str.upper() != 'UNRATED'
+
+# Group to fetch both total counts and rated counts per year
+raw_years = pd.to_numeric(df['Publication Year'], errors='coerce')
+df_clean_years = df.dropna(subset=['Publication Year']).copy()
+df_clean_years['Clean_Year'] = raw_years
+
+yearly_grouped = df_clean_years.groupby('Clean_Year').agg(
+    Total=('Article Name', 'count'),
+    Rated=('Is_ABDC_Rated', 'sum')
+).sort_index()
+
+if not yearly_grouped.empty:
+    min_year = int(yearly_grouped.index.min())
+    max_year = int(yearly_grouped.index.max())
+    total_papers = int(yearly_grouped['Total'].sum())
+    total_abdc = int(yearly_grouped['Rated'].sum())
+    
+    # Build the precise updated title phrase
+    chart_title = f"Number of Papers Published, {min_year} - {max_year} (total = {total_papers}), [total ABDC journal = {total_abdc}]"
+    chart_labels = [str(int(yr)) for yr in yearly_grouped.index]
+    chart_data_total = [int(val) for val in yearly_grouped['Total'].values]
+    chart_data_rated = [int(val) for val in yearly_grouped['Rated'].values]
 else:
     chart_title = "No Publication Data Available"
     chart_labels = []
-    chart_data = []
+    chart_data_total = []
+    chart_data_rated = []
 
 # --- 4. Build out the final HTML layout file ---
 html_content = f"""<!DOCTYPE html>
@@ -107,7 +123,7 @@ html_content = f"""<!DOCTYPE html>
         a {{ color: #3182ce; text-decoration: none; font-weight: 500; }}
         a:hover {{ text-decoration: underline; }}
         .badge-rating {{ background-color: #edf2f7; color: #4a5568; padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: 0.85em; }}
-        .chart-container {{ max-width: 750px; margin: 30px auto; position: relative; height: 350px; }}
+        .chart-container {{ max-width: 850px; margin: 30px auto; position: relative; height: 380px; }}
     </style>
 </head>
 <body>
@@ -164,14 +180,22 @@ html_content = f"""<!DOCTYPE html>
             type: 'bar',
             data: {{
                 labels: {json.dumps(chart_labels)},
-                datasets: [{{
-                    label: 'Number of Papers',
-                    data: {json.dumps(chart_data)},
-                    backgroundColor: 'rgba(49, 130, 206, 0.7)',
-                    borderColor: 'rgba(43, 108, 176, 1)',
-                    borderWidth: 1,
-                    barPercentage: 0.5
-                }}]
+                datasets: [
+                    {{
+                        label: 'Total Publications',
+                        data: {json.dumps(chart_data_total)},
+                        backgroundColor: 'rgba(49, 130, 206, 0.75)',
+                        borderColor: 'rgba(43, 108, 176, 1)',
+                        borderWidth: 1
+                    }},
+                    {{
+                        label: 'ABDC Rated (A*, A, B, C)',
+                        data: {json.dumps(chart_data_rated)},
+                        backgroundColor: 'rgba(49, 151, 149, 0.75)',
+                        borderColor: 'rgba(35, 78, 82, 1)',
+                        borderWidth: 1
+                    }}
+                ]
             }},
             options: {{
                 responsive: true,
@@ -180,11 +204,15 @@ html_content = f"""<!DOCTYPE html>
                     title: {{
                         display: true,
                         text: {json.dumps(chart_title)},
-                        font: {{ size: 16, weight: 'bold', family: "'Inter', sans-serif" }},
+                        font: {{ size: 15, weight: 'bold', family: "'Inter', sans-serif" }},
                         color: '#1a365d',
                         padding: {{ bottom: 20 }}
                     }},
-                    legend: {{ display: false }}
+                    legend: {{
+                        display: true,
+                        position: 'top',
+                        labels: {{ font: {{ family: "'Inter', sans-serif", weight: '500' }} }}
+                    }}
                 }},
                 scales: {{
                     y: {{
