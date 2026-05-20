@@ -19,7 +19,7 @@
         a { color: #3182ce; text-decoration: none; font-weight: 500; }
         a:hover { text-decoration: underline; }
         .badge-rating { background-color: #edf2f7; color: #4a5568; padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: 0.85em; }
-        .chart-container { max-width: 750px; margin: 30px auto; position: relative; height: 350px; }
+        .chart-container { max-width: 850px; margin: 30px auto; position: relative; height: 380px; }
     </style>
 </head>
 <body>
@@ -76,14 +76,22 @@
             type: 'bar',
             data: {
                 labels: ["2022", "2023", "2024", "2025", "2026"],
-                datasets: [{
-                    label: 'Number of Papers',
-                    data: [7, 9, 9, 13, 4],
-                    backgroundColor: 'rgba(49, 130, 206, 0.7)',
-                    borderColor: 'rgba(43, 108, 176, 1)',
-                    borderWidth: 1,
-                    barPercentage: 0.5
-                }]
+                datasets: [
+                    {
+                        label: 'Total Publications',
+                        data: [7, 9, 9, 13, 4],
+                        backgroundColor: 'rgba(49, 130, 206, 0.75)',
+                        borderColor: 'rgba(43, 108, 176, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'ABDC Rated (A*, A, B, C)',
+                        data: [3, 4, 4, 6, 3],
+                        backgroundColor: 'rgba(49, 151, 149, 0.75)',
+                        borderColor: 'rgba(35, 78, 82, 1)',
+                        borderWidth: 1
+                    }
+                ]
             },
             options: {
                 responsive: true,
@@ -91,12 +99,16 @@
                 plugins: {
                     title: {
                         display: true,
-                        text: "Number of Papers Published, 2022 - 2026 (total = 42)",
-                        font: { size: 16, weight: 'bold', family: "'Inter', sans-serif" },
+                        text: "Number of Papers Published, 2022 - 2026 (total = 42), [total ABDC journal = 20]",
+                        font: { size: 15, weight: 'bold', family: "'Inter', sans-serif" },
                         color: '#1a365d',
                         padding: { bottom: 20 }
                     },
-                    legend: { display: false }
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        labels: { font: { family: "'Inter', sans-serif", weight: '500' } }
+                    }
                 },
                 scales: {
                     y: {
