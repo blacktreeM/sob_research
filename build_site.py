@@ -43,25 +43,19 @@ for _, row in df_table.iterrows():
     main_table_rows += f"<td>{row.get('Abstract', '')}</td>"
     main_table_rows += "</tr>"
 
-# --- 2. Generate Faculty Summary Table Rows (Total Publications since 2022) ---
+# --- 2. Generate Faculty Summary Table Rows ---
 summary_rows = ""
 if "Faculty" in df.columns:
     all_individual_faculty = []
-    
-    # Loop through each row and break apart coauthors
     for faculty_entry in df['Faculty'].dropna():
-        # Split by comma in case multiple faculty members are on the same paper
         authors = [author.strip() for author in str(faculty_entry).split(',')]
         all_individual_faculty.extend(authors)
         
-    # Convert our list of individual names into a clean DataFrame series count
     faculty_series = pd.Series(all_individual_faculty)
     faculty_counts = faculty_series.value_counts().reset_index()
     faculty_counts.columns = ['Faculty Member', 'Total Publications']
     
-    # Build out the summary table rows
     for _, row in faculty_counts.iterrows():
-        # Skip empty names if any slip through
         if not row['Faculty Member']:
             continue
         summary_rows += "<tr>"
@@ -70,14 +64,13 @@ if "Faculty" in df.columns:
         summary_rows += "</tr>"
 
 # --- 3. Calculate Grouped Data metrics for Chart.js ---
-# Clean ABDC labels to isolate rated items safely
 df['ABDC Rating'] = df['ABDC Rating'].fillna('Unrated').astype(str).str.strip()
 df['Is_ABDC_Rated'] = df['ABDC Rating'].str.upper() != 'UNRATED'
 
-# Group to fetch both total counts and rated counts per year
-raw_years = pd.to_numeric(df['Publication Year'], errors='coerce')
+# Ensure years are processed as numeric safely
 df_clean_years = df.dropna(subset=['Publication Year']).copy()
-df_clean_years['Clean_Year'] = raw_years
+df_clean_years['Clean_Year'] = pd.to_numeric(df_clean_years['Publication Year'], errors='coerce')
+df_clean_years = df_clean_years.dropna(subset=['Clean_Year'])
 
 yearly_grouped = df_clean_years.groupby('Clean_Year').agg(
     Total=('Article Name', 'count'),
@@ -90,7 +83,6 @@ if not yearly_grouped.empty:
     total_papers = int(yearly_grouped['Total'].sum())
     total_abdc = int(yearly_grouped['Rated'].sum())
     
-    # Build the precise updated title phrase
     chart_title = f"Number of Papers Published, {min_year} - {max_year} (total = {total_papers}), [total ABDC journal = {total_abdc}]"
     chart_labels = [str(int(yr)) for yr in yearly_grouped.index]
     chart_data_total = [int(val) for val in yearly_grouped['Total'].values]
@@ -101,8 +93,8 @@ else:
     chart_data_total = []
     chart_data_rated = []
 
-# --- 4. Build out the final HTML layout file ---
-html_content = f"""<!DOCTYPE html>
+# --- 4. Build HTML layout using clean replacement tokens instead of f-strings ---
+html_template = """<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -110,20 +102,20 @@ html_content = f"""<!DOCTYPE html>
     <title>School of Business Faculty Research</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
-        body {{ font-family: "Inter", sans-serif; background-color: #f8f9fa; color: #333; padding: 40px 20px; margin: 0; }}
-        .container {{ max-width: 1200px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
-        h1 {{ color: #1a365d; border-bottom: 2px solid #e2e8f0; padding-bottom: 15px; margin-top: 0; margin-bottom: 30px; }}
-        h2 {{ color: #2c5282; margin-top: 40px; margin-bottom: 20px; font-size: 1.4em; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px; }}
-        .table-container {{ overflow-x: auto; margin-bottom: 40px; }}
-        table {{ width: 100%%; border-collapse: collapse; min-width: 800px; margin-bottom: 10px; }}
-        .summary-table {{ min-width: 300px; max-width: 500px; }}
-        th, td {{ padding: 12px 15px; text-align: left; border-bottom: 1px solid #e2e8f0; vertical-align: top; }}
-        th {{ background-color: #ebf8ff; color: #2b6cb0; font-weight: 600; }}
-        tr:hover {{ background-color: #f7fafc; }}
-        a {{ color: #3182ce; text-decoration: none; font-weight: 500; }}
-        a:hover {{ text-decoration: underline; }}
-        .badge-rating {{ background-color: #edf2f7; color: #4a5568; padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: 0.85em; }}
-        .chart-container {{ max-width: 850px; margin: 30px auto; position: relative; height: 380px; }}
+        body { font-family: "Inter", sans-serif; background-color: #f8f9fa; color: #333; padding: 40px 20px; margin: 0; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        h1 { color: #1a365d; border-bottom: 2px solid #e2e8f0; padding-bottom: 15px; margin-top: 0; margin-bottom: 30px; }
+        h2 { color: #2c5282; margin-top: 40px; margin-bottom: 20px; font-size: 1.4em; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px; }
+        .table-container { overflow-x: auto; margin-bottom: 40px; }
+        table { width: 100%; border-collapse: collapse; min-width: 800px; margin-bottom: 10px; }
+        .summary-table { min-width: 300px; max-width: 500px; }
+        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #e2e8f0; vertical-align: top; }
+        th { background-color: #ebf8ff; color: #2b6cb0; font-weight: 600; }
+        tr:hover { background-color: #f7fafc; }
+        a { color: #3182ce; text-decoration: none; font-weight: 500; }
+        a:hover { text-decoration: underline; }
+        .badge-rating { background-color: #edf2f7; color: #4a5568; padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: 0.85em; }
+        .chart-container { max-width: 850px; margin: 30px auto; position: relative; height: 380px; }
     </style>
 </head>
 <body>
@@ -144,7 +136,7 @@ html_content = f"""<!DOCTYPE html>
                     </tr>
                 </thead>
                 <tbody>
-                    {main_table_rows}
+                    __MAIN_TABLE_ROWS__
                 </tbody>
             </table>
         </div>
@@ -161,7 +153,7 @@ html_content = f"""<!DOCTYPE html>
                     </tr>
                 </thead>
                 <tbody>
-                    {summary_rows}
+                    __SUMMARY_ROWS__
                 </tbody>
             </table>
         </div>
@@ -176,59 +168,67 @@ html_content = f"""<!DOCTYPE html>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         const ctx = document.getElementById('publicationChart').getContext('2d');
-        new Chart(ctx, {{
+        new Chart(ctx, {
             type: 'bar',
-            data: {{
-                labels: {json.dumps(chart_labels)},
+            data: {
+                labels: __CHART_LABELS__,
                 datasets: [
-                    {{
+                    {
                         label: 'Total Publications',
-                        data: {json.dumps(chart_data_total)},
+                        data: __CHART_DATA_TOTAL__,
                         backgroundColor: 'rgba(49, 130, 206, 0.75)',
                         borderColor: 'rgba(43, 108, 176, 1)',
                         borderWidth: 1
-                    }},
-                    {{
+                    },
+                    {
                         label: 'ABDC Rated (A*, A, B, C)',
-                        data: {json.dumps(chart_data_rated)},
+                        data: __CHART_DATA_RATED__,
                         backgroundColor: 'rgba(49, 151, 149, 0.75)',
                         borderColor: 'rgba(35, 78, 82, 1)',
                         borderWidth: 1
-                    }}
+                    }
                 ]
-            }},
-            options: {{
+            },
+            options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: {{
-                    title: {{
+                plugins: {
+                    title: {
                         display: true,
-                        text: {json.dumps(chart_title)},
-                        font: {{ size: 15, weight: 'bold', family: "'Inter', sans-serif" }},
+                        text: __CHART_TITLE__,
+                        font: { size: 15, weight: 'bold', family: "'Inter', sans-serif" },
                         color: '#1a365d',
-                        padding: {{ bottom: 20 }}
-                    }},
-                    legend: {{
+                        padding: { bottom: 20 }
+                    },
+                    legend: {
                         display: true,
                         position: 'top',
-                        labels: {{ font: {{ family: "'Inter', sans-serif", weight: '500' }} }}
-                    }}
-                }},
-                scales: {{
-                    y: {{
+                        labels: { font: { family: "'Inter', sans-serif", weight: '500' } }
+                    }
+                },
+                scales: {
+                    y: {
                         beginAtZero: true,
-                        ticks: {{ stepSize: 1, font: {{ family: "'Inter', sans-serif" }} }}
-                    }},
-                    x: {{
-                        ticks: {{ font: {{ family: "'Inter', sans-serif" }} }}
-                    }}
-                }}
-            }}
-        }});
+                        ticks: { stepSize: 1, font: { family: "'Inter', sans-serif" } }
+                    },
+                    x: {
+                        ticks: { font: { family: "'Inter', sans-serif" } }
+                    }
+                }
+            }
+        });
     </script>
 </body>
 </html>
 """
+
+# Perform safe manual updates to injection tokens
+html_content = html_template.replace("__MAIN_TABLE_ROWS__", main_table_rows)
+html_content = html_content.replace("__SUMMARY_ROWS__", summary_rows)
+html_content = html_content.replace("__CHART_TITLE__", json.dumps(chart_title))
+html_content = html_content.replace("__CHART_LABELS__", json.dumps(chart_labels))
+html_content = html_content.replace("__CHART_DATA_TOTAL__", json.dumps(chart_data_total))
+html_content = html_content.replace("__CHART_DATA_RATED__", json.dumps(chart_data_rated))
 
 # Save out to public-facing docs folder context
 output_dir = Path(__file__).parent / "docs"
