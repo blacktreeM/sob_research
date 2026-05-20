@@ -135,7 +135,7 @@ html_content = f"""<!DOCTYPE html>
         
         <hr style="border: 0; border-top: 2px solid #e2e8f0; margin: 40px 0;">
         
-        <h2>Number of Publications since 2022</h2>
+        <h2>Number of Publications 2022-2026</h2>
         <div class="table-container">
             <table class="summary-table">
                 <thead>
