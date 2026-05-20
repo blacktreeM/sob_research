@@ -1,7 +1,4 @@
-openpyxl
-selectolax
-shiny
-shinylive
 pandas
 requests
-matplotlib
+selectolax
+openpyxl
