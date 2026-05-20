@@ -27,24 +27,36 @@ if "Abstract" in df.columns:
         lambda x: f'<a href="{x}" target="_blank">View Abstract</a>' if pd.notnull(x) and str(x).startswith('http') else ""
     )
 
-# Build a clean copy matching your original app layout styling
+# --- 1. Generate Main Publications Table Rows ---
 df_table = df.copy()
 df_table.insert(0, "#", range(1, len(df_table) + 1))
 
-# Generate clean inner table row data tags using scraper columns
-table_rows = ""
+main_table_rows = ""
 for _, row in df_table.iterrows():
-    table_rows += "<tr>"
-    table_rows += f"<td>{row.get('#', '')}</td>"
-    table_rows += f"<td>{row.get('Faculty', '')}</td>"
-    table_rows += f"<td>{row.get('Journal Name', '')}</td>"
-    table_rows += f"<td>{row.get('Article Name', '')}</td>"
-    table_rows += f"<td>{row.get('Publication Year', '')}</td>"
-    table_rows += f"<td><span class='badge-rating'>{row.get('ABDC Rating', 'Unrated')}</span></td>"
-    table_rows += f"<td>{row.get('Abstract', '')}</td>"
-    table_rows += "</tr>"
+    main_table_rows += "<tr>"
+    main_table_rows += f"<td>{row.get('#', '')}</td>"
+    main_table_rows += f"<td>{row.get('Faculty', '')}</td>"
+    main_table_rows += f"<td>{row.get('Journal Name', '')}</td>"
+    main_table_rows += f"<td>{row.get('Article Name', '')}</td>"
+    main_table_rows += f"<td>{row.get('Publication Year', '')}</td>"
+    main_table_rows += f"<td><span class='badge-rating'>{row.get('ABDC Rating', 'Unrated')}</span></td>"
+    main_table_rows += f"<td>{row.get('Abstract', '')}</td>"
+    main_table_rows += "</tr>"
 
-# --- Calculate Data metrics for Chart.js directly ---
+# --- 2. Generate Faculty Summary Table Rows (Total Publications since 2022) ---
+summary_rows = ""
+if "Faculty" in df.columns:
+    # Count total publications per faculty member and sort descending by production volume
+    faculty_counts = df['Faculty'].value_counts().reset_index()
+    faculty_counts.columns = ['Faculty Member', 'Total Publications']
+    
+    for _, row in faculty_counts.iterrows():
+        summary_rows += "<tr>"
+        summary_rows += f"<td>{row['Faculty Member']}</td>"
+        summary_rows += f"<td><strong>{row['Total Publications']}</strong></td>"
+        summary_rows += "</tr>"
+
+# --- 3. Calculate Data metrics for Chart.js directly ---
 raw_years = pd.to_numeric(df['Publication Year'], errors='coerce').dropna().astype(int)
 year_counts = raw_years.value_counts().sort_index()
 
@@ -60,7 +72,7 @@ else:
     chart_labels = []
     chart_data = []
 
-# --- Build out the final HTML layout file ---
+# --- 4. Build out the final HTML layout file ---
 html_content = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -72,8 +84,10 @@ html_content = f"""<!DOCTYPE html>
         body {{ font-family: "Inter", sans-serif; background-color: #f8f9fa; color: #333; padding: 40px 20px; margin: 0; }}
         .container {{ max-width: 1200px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
         h1 {{ color: #1a365d; border-bottom: 2px solid #e2e8f0; padding-bottom: 15px; margin-top: 0; margin-bottom: 30px; }}
+        h2 {{ color: #2c5282; margin-top: 40px; margin-bottom: 20px; font-size: 1.4em; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px; }}
         .table-container {{ overflow-x: auto; margin-bottom: 40px; }}
-        table {{ width: 100%%; border-collapse: collapse; min-width: 800px; }}
+        table {{ width: 100%%; border-collapse: collapse; min-width: 800px; margin-bottom: 10px; }}
+        .summary-table {{ min-width: 300px; max-width: 500px; }}
         th, td {{ padding: 12px 15px; text-align: left; border-bottom: 1px solid #e2e8f0; vertical-align: top; }}
         th {{ background-color: #ebf8ff; color: #2b6cb0; font-weight: 600; }}
         tr:hover {{ background-color: #f7fafc; }}
@@ -101,11 +115,28 @@ html_content = f"""<!DOCTYPE html>
                     </tr>
                 </thead>
                 <tbody>
-                    {table_rows}
+                    {main_table_rows}
                 </tbody>
             </table>
         </div>
         
+        <hr style="border: 0; border-top: 2px solid #e2e8f0; margin: 40px 0;">
+        
+        <h2>Number of Publications since 2022</h2>
+        <div class="table-container">
+            <table class="summary-table">
+                <thead>
+                    <tr>
+                        <th>Faculty Member</th>
+                        <th style="width: 150px;">Total Publications</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {summary_rows}
+                </tbody>
+            </table>
+        </div>
+
         <hr style="border: 0; border-top: 2px solid #e2e8f0; margin: 40px 0;">
         
         <div class="chart-container">
