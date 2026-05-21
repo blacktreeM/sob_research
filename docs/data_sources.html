@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Research Data Sources Reference</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fa;
+            color: #2d3748;
+            line-height: 1.6;
+            margin: 0;
+            padding: 40px 20px;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        header {
+            margin-bottom: 40px;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 20px;
+        }
+        h1 {
+            color: #1a365d;
+            font-size: 2.2rem;
+            margin: 0 0 10px 0;
+        }
+        .subtitle {
+            color: #4a5568;
+            font-size: 1.1rem;
+            margin: 0;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+        }
+        .category-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            padding: 25px;
+            border-top: 4px solid #cbd5e0;
+        }
+        .category-card.business { border-top-color: #3182ce; }
+        .category-card.economic { border-top-color: #2b6cb0; }
+        .category-card.housing { border-top-color: #dd6b20; }
+        .category-card.health { border-top-color: #319795; }
+        .category-card.crime { border-top-color: #4a5568; }
+        
+        h2 {
+            font-size: 1.4rem;
+            margin-top: 0;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+        .business h2 { color: #2b6cb0; }
+        .economic h2 { color: #2c5282; }
+        .housing h2 { color: #9c4221; }
+        .health h2 { color: #234e52; }
+        .crime h2 { color: #2d3748; }
+
+        .links-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .links-list li {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #edf2f7;
+        }
+        .links-list li:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+        .data-link {
+            color: #2b6cb0;
+            text-decoration: none;
+            font-weight: 500;
+            display: block;
+            transition: color 0.2s ease;
+        }
+        .data-link:hover {
+            color: #4299e1;
+            text-decoration: underline;
+        }
+        .source-tag {
+            display: inline-block;
+            font-size: 0.75rem;
+            background-color: #edf2f7;
+            color: #4a5568;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-top: 4px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Research Data Sources Reference</h1>
+        <p class="subtitle">Please let me know if you have any questions or want to share other data sources.</p>
+    </header>
+
+    <div class="grid">
+        <!-- Business Data Category -->
+        <div class="category-card business">
+            <h2>Business Data</h2>
+            <ul class="links-list">
+                <li>
+                    <a class="data-link" href="https://www.census.gov/programs-surveys/cbp/data/datasets.html" target="_blank">County Business Patterns (CBP)</a>
+                    <span class="source-tag">U.S. Census Bureau</span>
+                </li>
+                <li>
+                    <a class="data-link" href="https://www.census.gov/data/datasets/time-series/econ/bds/bds-datasets.html" target="_blank">2023 Business Dynamics Statistics Datasets</a>
+                    <span class="source-tag">U.S. Census Bureau</span>
+                </li>
+                <li>
+                    <a class="data-link" href="https://www.census.gov/programs-surveys/nonemployer-statistics/data.html" target="_blank">Nonemployer Statistics</a>
+                    <span class="source-tag">U.S. Census Bureau</span>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Economic Data Category -->
+        <div class="category-card economic">
+            <h2>Economic Data</h2>
+            <ul class="links-list">
+                <li>
+                    <a class="data-link" href="https://www.bls.gov/lau/data.htm" target="_blank">Local Area Unemployment Statistics</a>
+                    <span class="source-tag">Bureau of Labor Statistics</span>
+                </li>
+                <li>
+                    <a class="data-link" href="https://www.census.gov/programs-surveys/saipe/data.html" target="_blank">Small Area Income and Poverty Estimates (SAIPE)</a>
+                    <span class="source-tag">U.S. Census Bureau</span>
+                </li>
+                <li>
+                    <a class="data-link" href="https://www.census.gov/programs-surveys/acs/data.html" target="_blank">American Community Survey (ACS)</a>
+                    <span class="source-tag">U.S. Census Bureau</span>
+                </li>
+                <li>
+                    <a class="data-link" href="https://www.irs.gov/statistics/soi-tax-stats-individual-income-tax-statistics-zip-code-data-soi" target="_blank">IRS Individual Income Tax Statistics - ZIP Code Data</a>
+                    <span class="source-tag">Internal Revenue Service</span>
+                </li>
+                <li>
+                    <a class="data-link" href="https://ukcpr.uky.edu/resources" target="_blank">UKCPR National Welfare Data</a>
+                    <span class="source-tag">University of Kentucky Center for Poverty Research</span>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Housing Data Category -->
+        <div class="category-card housing">
+            <h2>Housing Data</h2>
+            <ul class="links-list">
+                <li>
+                    <a class="data-link" href="https://www.zillow.com/research/data/" target="_blank">Zillow Real Estate Research Data</a>
+                    <span class="source-tag">Zillow</span>
+                </li>
+                <li>
+                    <a class="data-link" href="https://www.realtor.com/research/data/" target="_blank">Realtor.com Economic Research Data</a>
+                    <span class="source-tag">Realtor.com</span>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Health Data Category -->
+        <div class="category-card health">
+            <h2>Health Data</h2>
+            <ul class="links-list">
+                <li>
+                    <a class="data-link" href="https://wonder.cdc.gov/" target="_blank">CDC WONDER Public-Use Databases</a>
+                    <span class="source-tag">CDC</span>
+                </li>
+                <li>
+                    <a class="data-link" href="https://www.cdc.gov/brfss/annual_data/annual_data.htm" target="_blank">Behavioral Risk Factor Surveillance System (BRFSS)</a>
+                    <span class="source-tag">CDC</span>
+                </li>
+                <li>
+                    <a class="data-link" href="https://www.census.gov/programs-surveys/sahie/data.html" target="_blank">Small Area Health Insurance Estimates (SAHIE)</a>
+                    <span class="source-tag">U.S. Census Bureau</span>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Crime & Policy Data Category -->
+        <div class="category-card crime">
+            <h2>Crime &amp; Policy Data</h2>
+            <ul class="links-list">
+                <li>
+                    <a class="data-link" href="https://dps.arkansas.gov/crime-info-support/arkansas-crime-information-center/crime-statistics/" target="_blank">Arkansas Crime Statistics</a>
+                    <span class="source-tag">Arkansas Department of Public Safety</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+</body>
