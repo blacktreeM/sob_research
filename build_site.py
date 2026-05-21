@@ -166,7 +166,7 @@ html_template = """<!DOCTYPE html>
             <canvas id="publicationChart"></canvas>
         </div>
         <div class="nav-links">
-            <a href="ABDC.html"  target="_blank">Data sources for your research</a>
+            <a href="data_sources.html"  target="_blank">Data sources for your research</a>
         </div>
         
     </div>
