@@ -120,6 +120,9 @@ html_template = """<!DOCTYPE html>
 </head>
 <body>
     <div class="container">
+        <div class="nav-links">
+            <a href="ABDC.html">View Additional Page Details</a>
+        </div>
         <h2>School of Business Faculty Published Papers (from Google Scholar)</h2>
         
         <div class="table-container">
