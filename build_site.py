@@ -120,11 +120,10 @@ html_template = """<!DOCTYPE html>
 </head>
 <body>
     <div class="container">
-        <div class="nav-links">
-            <a href="ABDC.html">View Additional Page Details</a>
-        </div>
         <h2>School of Business Faculty Published Papers (from Google Scholar)</h2>
-        
+        <div class="nav-links">
+            <a href="ABDC.html"  target="_blank">ABDC Journal Quality List</a>
+        </div>
         <div class="table-container">
             <table>
                 <thead>
@@ -166,6 +165,10 @@ html_template = """<!DOCTYPE html>
         <div class="chart-container">
             <canvas id="publicationChart"></canvas>
         </div>
+        <div class="nav-links">
+            <a href="ABDC.html"  target="_blank">Data sources for your research</a>
+        </div>
+        
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
