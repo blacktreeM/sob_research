@@ -37,6 +37,7 @@
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
             gap: 25px;
+            align-items: start;
         }
         .category-card {
             background: white;
@@ -112,7 +113,6 @@
     </header>
 
     <div class="grid">
-        <!-- Business Data Category -->
         <div class="category-card business">
             <h2>Business Data</h2>
             <ul class="links-list">
@@ -131,7 +131,6 @@
             </ul>
         </div>
 
-        <!-- Economic Data Category -->
         <div class="category-card economic">
             <h2>Economic Data</h2>
             <ul class="links-list">
@@ -148,8 +147,28 @@
                     <span class="source-tag">U.S. Census Bureau</span>
                 </li>
                 <li>
+                    <a class="data-link" href="https://www.census.gov/data/datasets/time-series/demo/cps/cps-basic.html" target="_blank">Current Population Survey (CPS)</a>
+                    <span class="source-tag">U.S. Census Bureau / BLS</span>
+                </li>
+                <li>
                     <a class="data-link" href="https://www.irs.gov/statistics/soi-tax-stats-individual-income-tax-statistics-zip-code-data-soi" target="_blank">IRS Individual Income Tax Statistics - ZIP Code Data</a>
                     <span class="source-tag">Internal Revenue Service</span>
+                </li>
+                <li>
+                    <a class="data-link" href="https://www.newyorkfed.org/microeconomics/databank.html" target="_blank">Center for Microeconomic Data (Spending and Debt)</a>
+                    <span class="source-tag">Federal Reserve Bank of New York</span>
+                </li>
+                <li>
+                    <a class="data-link" href="https://www.federalreserve.gov/econres/scfindex.htm" target="_blank">Survey of Consumer Finances (SCF)</a>
+                    <span class="source-tag">Federal Reserve Board</span>
+                </li>
+                <li>
+                    <a class="data-link" href="https://www.census.gov/programs-surveys/sipp/data/datasets.html" target="_blank">Survey of Income and Program Participation (SIPP)</a>
+                    <span class="source-tag">U.S. Census Bureau</span>
+                </li>
+                <li>
+                    <a class="data-link" href="https://opportunityinsights.org/data/" target="_blank">Opportunity Insights Data Platform</a>
+                    <span class="source-tag">Harvard University</span>
                 </li>
                 <li>
                     <a class="data-link" href="https://ukcpr.uky.edu/resources" target="_blank">UKCPR National Welfare Data</a>
@@ -158,7 +177,6 @@
             </ul>
         </div>
 
-        <!-- Housing Data Category -->
         <div class="category-card housing">
             <h2>Housing Data</h2>
             <ul class="links-list">
@@ -173,7 +191,6 @@
             </ul>
         </div>
 
-        <!-- Health Data Category -->
         <div class="category-card health">
             <h2>Health Data</h2>
             <ul class="links-list">
@@ -192,10 +209,17 @@
             </ul>
         </div>
 
-        <!-- Crime & Policy Data Category -->
         <div class="category-card crime">
             <h2>Crime &amp; Policy Data</h2>
             <ul class="links-list">
+                <li>
+                    <a class="data-link" href="https://nanda.isr.umich.edu/" target="_blank">The National Neighborhood Data Archive (NaNDA)</a>
+                    <span class="source-tag">University of Michigan (ISR)</span>
+                </li>
+                <li>
+                    <a class="data-link" href="https://gss.norc.org/get-the-data/sas.html" target="_blank">General Social Survey (GSS) Data</a>
+                    <span class="source-tag">NORC at the University of Chicago</span>
+                </li>
                 <li>
                     <a class="data-link" href="https://dps.arkansas.gov/crime-info-support/arkansas-crime-information-center/crime-statistics/" target="_blank">Arkansas Crime Statistics</a>
                     <span class="source-tag">Arkansas Department of Public Safety</span>
@@ -206,3 +230,4 @@
 </div>
 
 </body>
+</html>
