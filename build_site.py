@@ -43,7 +43,7 @@ for _, row in df_table.iterrows():
     main_table_rows += f"<td>{row.get('Abstract', '')}</td>"
     main_table_rows += "</tr>"
 
-# --- 2. Generate Faculty Summary Table Rows ---
+# --- 2. Generate Faculty Summary Table Rows (Sorted by Last Name) ---
 summary_rows = ""
 if "Faculty" in df.columns:
     all_individual_faculty = []
@@ -55,9 +55,19 @@ if "Faculty" in df.columns:
     faculty_counts = faculty_series.value_counts().reset_index()
     faculty_counts.columns = ['Faculty Member', 'Total Publications']
     
+    # Filter out empty names
+    faculty_counts = faculty_counts[faculty_counts['Faculty Member'].str.strip() != ""]
+    
+    # Extract last name for sorting purposes (assumes 'First Last' or 'First Middle Last')
+    # If the entry has suffixes or formatting quirks, this grabs the terminal word.
+    faculty_counts['Last Name'] = faculty_counts['Faculty Member'].apply(
+        lambda x: x.split()[-1].lower() if len(x.split()) > 0 else ""
+    )
+    
+    # Sort data frame alphabetically by the extracted last name
+    faculty_counts = faculty_counts.sort_values(by='Last Name').drop(columns=['Last Name'])
+    
     for _, row in faculty_counts.iterrows():
-        if not row['Faculty Member']:
-            continue
         summary_rows += "<tr>"
         summary_rows += f"<td>{row['Faculty Member']}</td>"
         summary_rows += f"<td><strong>{row['Total Publications']}</strong></td>"
