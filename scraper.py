@@ -7,8 +7,9 @@ from selectolax.parser import HTMLParser
 import re
 import os
 import shutil
+import sys
 
-def scrape_entire_scholar_profile(api_key, profile_id, faculty_name, provider="scraperapi"):
+def scrape_entire_scholar_profile(api_key, profile_id, faculty_name, provider="scrapingbee"):
     publications = []
     cstart = 0       # Starting index (0 means article #1)
     pagesize = 100   # Max allowed articles per request batch
@@ -108,8 +109,8 @@ def scrape_entire_scholar_profile(api_key, profile_id, faculty_name, provider="s
 # ==========================================
 # CONFIGURATION & TOGGLE SWITCH
 # ==========================================
-# Set your active provider here: "scraperapi" or "scrapingbee"
-ACTIVE_PROVIDER = "scraperapi" 
+# Changed to scrapingbee to prevent the 403 forbidden error
+ACTIVE_PROVIDER = "scrapingbee" 
 
 # Active Keys Mapping
 if ACTIVE_PROVIDER == "scraperapi":
@@ -142,11 +143,14 @@ for faculty in faculty_list:
 # Compile into data frame
 df = pd.DataFrame(all_data)
 
-if not df.empty:
-    df.to_csv("faculty_publications.csv", index=False)
-    print("\nExtraction fully complete! Saved to 'faculty_publications.csv'")
+# --- CRITICAL SAFETY CHECK TO PREVENT PIPELINE CRASH ---
+if df.empty:
+    print("\n[WARNING] Execution finished, but the proxy returned zero data rows.")
+    print("Stopping execution safely to prevent a KeyError crash.")
+    sys.exit(0)
 else:
-    print("\nExecution finished, but output table is empty.")
+    df.to_csv("faculty_publications.csv", index=False)
+    print(f"\nExtraction fully complete! Saved {len(df)} records to 'faculty_publications.csv'")
     
 # ---------------------------------------------------------
 # Part 1: Filter Publications (2022 or Later)
