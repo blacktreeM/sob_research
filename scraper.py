@@ -8,23 +8,33 @@ import re
 import os
 import shutil
 
-def scrape_entire_scholar_profile(api_key, profile_id, faculty_name):
+def scrape_entire_scholar_profile(api_key, profile_id, faculty_name, provider="scraperapi"):
     publications = []
     cstart = 0       # Starting index (0 means article #1)
     pagesize = 100   # Max allowed articles per request batch
     
-    print(f"\nFetching ALL data via proxy tunnel for {faculty_name}...")
+    print(f"\nFetching ALL data via {provider} proxy tunnel for {faculty_name}...")
     
     while True:
         # Construct a URL that forces Google to give us 100 articles at a time
         scholar_url = f"https://scholar.google.com/citations?user={profile_id}&hl=en&cstart={cstart}&pagesize={pagesize}"
         
-        proxy_url = "https://app.scrapingbee.com/api/v1/" # "http://api.scraperapi.com"
-        payload = {
-            'api_key': api_key,
-            'url': scholar_url,
-            'keep_headers': 'true'
-        }
+        # Structure payload dynamically based on the active provider
+        if provider == "scraperapi":
+            proxy_url = "http://api.scraperapi.com"
+            payload = {
+                'api_key': api_key,
+                'url': scholar_url
+            }
+        elif provider == "scrapingbee":
+            proxy_url = "https://app.scrapingbee.com/api/v1/"
+            payload = {
+                'api_key': api_key,
+                'url': scholar_url,
+                'keep_headers': 'true'
+            }
+        else:
+            raise ValueError("Unknown provider specified. Use 'scraperapi' or 'scrapingbee'.")
         
         try:
             # Short pause between page chunks to remain undetected
@@ -95,8 +105,17 @@ def scrape_entire_scholar_profile(api_key, profile_id, faculty_name):
     print(f"  --> Success! Total extracted for {faculty_name}: {len(publications)} articles.")
     return publications
 
-# --- Configuration ---
-SCRAPERAPI_KEY = "YBNVDMCZYTXUKJBE3S57L5N90SPTI4IFF46QB9KNVSBGP9G35R30XA58Q09Z4CPXJ8QCQ74RXI82DVE4" # "f64115a7dae86ae150769602280d8e7f"
+# ==========================================
+# CONFIGURATION & TOGGLE SWITCH
+# ==========================================
+# Set your active provider here: "scraperapi" or "scrapingbee"
+ACTIVE_PROVIDER = "scraperapi" 
+
+# Active Keys Mapping
+if ACTIVE_PROVIDER == "scraperapi":
+    ACTIVE_KEY = "f64115a7dae86ae150769602280d8e7f"
+else:
+    ACTIVE_KEY = "YBNVDMCZYTXUKJBE3S57L5N90SPTI4IFF46QB9KNVSBGP9G35R30XA58Q09Z4CPXJ8QCQ74RXI82DVE4"
 
 faculty_list = [
     {"name": "Masa Kuroki", "id": "Q6SsuLgAAAAJ"},
@@ -116,7 +135,7 @@ faculty_list = [
 # --- Main Processing Loop ---
 all_data = []
 for faculty in faculty_list:
-    faculty_data = scrape_entire_scholar_profile(SCRAPERAPI_KEY, faculty["id"], faculty["name"])
+    faculty_data = scrape_entire_scholar_profile(ACTIVE_KEY, faculty["id"], faculty["name"], provider=ACTIVE_PROVIDER)
     all_data.extend(faculty_data)
     time.sleep(3) # Brief buffer gap between switching faculty profiles
 
@@ -128,6 +147,7 @@ if not df.empty:
     print("\nExtraction fully complete! Saved to 'faculty_publications.csv'")
 else:
     print("\nExecution finished, but output table is empty.")
+    
 # ---------------------------------------------------------
 # Part 1: Filter Publications (2022 or Later)
 # ---------------------------------------------------------
