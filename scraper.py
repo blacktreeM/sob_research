@@ -1,5 +1,5 @@
-# f64115a7dae86ae150769602280d8e7f scraperapi
-# YBNVDMCZYTXUKJBE3S57L5N90SPTI4IFF46QB9KNVSBGP9G35R30XA58Q09Z4CPXJ8QCQ74RXI82DVE4 scrapingbee
+# f64115a7dae86ae150769602280d8e7f 
+# 774a6cccb40fa1ec293635a974d43b82
 import time
 import requests
 import pandas as pd
@@ -7,35 +7,24 @@ from selectolax.parser import HTMLParser
 import re
 import os
 import shutil
-import sys
 
-def scrape_entire_scholar_profile(api_key, profile_id, faculty_name, provider="scrapingbee"):
+def scrape_entire_scholar_profile(api_key, profile_id, faculty_name):
     publications = []
     cstart = 0       # Starting index (0 means article #1)
     pagesize = 100   # Max allowed articles per request batch
     
-    print(f"\nFetching ALL data via {provider} proxy tunnel for {faculty_name}...")
+    print(f"\nFetching ALL data via proxy tunnel for {faculty_name}...")
     
     while True:
         # Construct a URL that forces Google to give us 100 articles at a time
         scholar_url = f"https://scholar.google.com/citations?user={profile_id}&hl=en&cstart={cstart}&pagesize={pagesize}"
         
-        # Structure payload dynamically based on the active provider
-        if provider == "scraperapi":
-            proxy_url = "http://api.scraperapi.com"
-            payload = {
-                'api_key': api_key,
-                'url': scholar_url
-            }
-        elif provider == "scrapingbee":
-            proxy_url = "https://app.scrapingbee.com/api/v1/"
-            payload = {
-                'api_key': api_key,
-                'url': scholar_url,
-                'keep_headers': 'true'
-            }
-        else:
-            raise ValueError("Unknown provider specified. Use 'scraperapi' or 'scrapingbee'.")
+        proxy_url = "http://api.scraperapi.com"
+        payload = {
+            'api_key': api_key,
+            'url': scholar_url,
+            'keep_headers': 'true'
+        }
         
         try:
             # Short pause between page chunks to remain undetected
@@ -106,17 +95,8 @@ def scrape_entire_scholar_profile(api_key, profile_id, faculty_name, provider="s
     print(f"  --> Success! Total extracted for {faculty_name}: {len(publications)} articles.")
     return publications
 
-# ==========================================
-# CONFIGURATION & TOGGLE SWITCH
-# ==========================================
-# Changed to scrapingbee to prevent the 403 forbidden error
-ACTIVE_PROVIDER = "scrapingbee" 
-
-# Active Keys Mapping
-if ACTIVE_PROVIDER == "scraperapi":
-    ACTIVE_KEY = "f64115a7dae86ae150769602280d8e7f"
-else:
-    ACTIVE_KEY = "YBNVDMCZYTXUKJBE3S57L5N90SPTI4IFF46QB9KNVSBGP9G35R30XA58Q09Z4CPXJ8QCQ74RXI82DVE4"
+# --- Configuration ---
+SCRAPERAPI_KEY = "774a6cccb40fa1ec293635a974d43b82" # "f64115a7dae86ae150769602280d8e7f"
 
 faculty_list = [
     {"name": "Masa Kuroki", "id": "Q6SsuLgAAAAJ"},
@@ -136,22 +116,18 @@ faculty_list = [
 # --- Main Processing Loop ---
 all_data = []
 for faculty in faculty_list:
-    faculty_data = scrape_entire_scholar_profile(ACTIVE_KEY, faculty["id"], faculty["name"], provider=ACTIVE_PROVIDER)
+    faculty_data = scrape_entire_scholar_profile(SCRAPERAPI_KEY, faculty["id"], faculty["name"])
     all_data.extend(faculty_data)
     time.sleep(3) # Brief buffer gap between switching faculty profiles
 
 # Compile into data frame
 df = pd.DataFrame(all_data)
 
-# --- CRITICAL SAFETY CHECK TO PREVENT PIPELINE CRASH ---
-if df.empty:
-    print("\n[WARNING] Execution finished, but the proxy returned zero data rows.")
-    print("Stopping execution safely to prevent a KeyError crash.")
-    sys.exit(0)
-else:
+if not df.empty:
     df.to_csv("faculty_publications.csv", index=False)
-    print(f"\nExtraction fully complete! Saved {len(df)} records to 'faculty_publications.csv'")
-    
+    print("\nExtraction fully complete! Saved to 'faculty_publications.csv'")
+else:
+    print("\nExecution finished, but output table is empty.")
 # ---------------------------------------------------------
 # Part 1: Filter Publications (2022 or Later)
 # ---------------------------------------------------------
