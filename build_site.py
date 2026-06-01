@@ -1,6 +1,7 @@
 from pathlib import Path
 import pandas as pd
 import json
+from datetime import datetime  # Added to grab the current date
 
 # Read the latest scraped data file
 data_path = Path(__file__).parent / "data.csv"
@@ -59,7 +60,6 @@ if "Faculty" in df.columns:
     faculty_counts = faculty_counts[faculty_counts['Faculty Member'].str.strip() != ""]
     
     # Extract last name for sorting purposes (assumes 'First Last' or 'First Middle Last')
-    # If the entry has suffixes or formatting quirks, this grabs the terminal word.
     faculty_counts['Last Name'] = faculty_counts['Faculty Member'].apply(
         lambda x: x.split()[-1].lower() if len(x.split()) > 0 else ""
     )
@@ -103,7 +103,11 @@ else:
     chart_data_total = []
     chart_data_rated = []
 
-# --- 4. Build HTML layout using clean replacement tokens instead of f-strings ---
+# --- Generate Timestamp Text ---
+# Formats date nicely like: "June 01, 2026"
+last_updated_string = datetime.now().strftime("%B %d, %Y")
+
+# --- 4. Build HTML layout using clean replacement tokens ---
 html_template = """<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -113,7 +117,7 @@ html_template = """<!DOCTYPE html>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         body { font-family: "Inter", sans-serif; background-color: #f8f9fa; color: #333; padding: 40px 20px; margin: 0; }
-        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); position: relative; }
         h1 { color: #1a365d; border-bottom: 2px solid #e2e8f0; padding-bottom: 15px; margin-top: 0; margin-bottom: 30px; }
         h2 { color: #2c5282; margin-top: 40px; margin-bottom: 20px; font-size: 1.4em; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px; }
         .table-container { overflow-x: auto; margin-bottom: 40px; }
@@ -126,6 +130,7 @@ html_template = """<!DOCTYPE html>
         a:hover { text-decoration: underline; }
         .badge-rating { background-color: #edf2f7; color: #4a5568; padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: 0.85em; }
         .chart-container { max-width: 850px; margin: 30px auto; position: relative; height: 380px; }
+        .footer-note { text-align: center; color: #718096; font-size: 0.85em; margin-top: 50px; border-top: 1px solid #e2e8f0; padding-top: 15px; }
     </style>
 </head>
 <body>
@@ -177,6 +182,10 @@ html_template = """<!DOCTYPE html>
         </div>
         <div class="nav-links">
             <a href="data_sources.html"  target="_blank">Data sources for your research</a>
+        </div>
+        
+        <div class="footer-note">
+            Last updated on __LAST_UPDATED__
         </div>
         
     </div>
@@ -245,6 +254,7 @@ html_content = html_content.replace("__CHART_TITLE__", json.dumps(chart_title))
 html_content = html_content.replace("__CHART_LABELS__", json.dumps(chart_labels))
 html_content = html_content.replace("__CHART_DATA_TOTAL__", json.dumps(chart_data_total))
 html_content = html_content.replace("__CHART_DATA_RATED__", json.dumps(chart_data_rated))
+html_content = html_content.replace("__LAST_UPDATED__", last_updated_string) # Injects date string
 
 # Save out to public-facing docs folder context
 output_dir = Path(__file__).parent / "docs"
