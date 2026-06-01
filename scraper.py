@@ -1,4 +1,5 @@
-# f64115a7dae86ae150769602280d8e7f
+# f64115a7dae86ae150769602280d8e7f scraperapi
+# YBNVDMCZYTXUKJBE3S57L5N90SPTI4IFF46QB9KNVSBGP9G35R30XA58Q09Z4CPXJ8QCQ74RXI82DVE4 scrapingbee
 import time
 import requests
 import pandas as pd
@@ -18,7 +19,7 @@ def scrape_entire_scholar_profile(api_key, profile_id, faculty_name):
         # Construct a URL that forces Google to give us 100 articles at a time
         scholar_url = f"https://scholar.google.com/citations?user={profile_id}&hl=en&cstart={cstart}&pagesize={pagesize}"
         
-        proxy_url = "http://api.scraperapi.com"
+        proxy_url = "https://app.scrapingbee.com/api/v1/" # "http://api.scraperapi.com"
         payload = {
             'api_key': api_key,
             'url': scholar_url,
@@ -95,7 +96,7 @@ def scrape_entire_scholar_profile(api_key, profile_id, faculty_name):
     return publications
 
 # --- Configuration ---
-SCRAPERAPI_KEY = "f64115a7dae86ae150769602280d8e7f"
+SCRAPERAPI_KEY = "YBNVDMCZYTXUKJBE3S57L5N90SPTI4IFF46QB9KNVSBGP9G35R30XA58Q09Z4CPXJ8QCQ74RXI82DVE4" # "f64115a7dae86ae150769602280d8e7f"
 
 faculty_list = [
     {"name": "Masa Kuroki", "id": "Q6SsuLgAAAAJ"},
