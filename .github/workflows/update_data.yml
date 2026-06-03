@@ -1,11 +1,14 @@
 name: Scheduled Faculty Scholar Scraper
 
 on:
-  workflow_dispatch: # Allows you to manually trigger the scraper with a button click
+  workflow_dispatch: # Keeps the manual "Run workflow" button active on GitHub
+  schedule:
+    # Runs at 00:00 UTC on the 1st day of every month
+    - cron: '0 0 1 * *'
 
 permissions:
-  contents: write  # Gives the action permission to commit files back to your repo
-
+  contents: write
+  
 jobs:
   scrape-and-update:
     runs-on: ubuntu-latest
