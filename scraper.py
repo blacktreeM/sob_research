@@ -96,7 +96,7 @@ def scrape_entire_scholar_profile(api_key, profile_id, faculty_name):
     return publications
 
 # --- Configuration ---
-SCRAPERAPI_KEY = "774a6cccb40fa1ec293635a974d43b82" # "f64115a7dae86ae150769602280d8e7f"
+SCRAPERAPI_KEY = "f64115a7dae86ae150769602280d8e7f" #"774a6cccb40fa1ec293635a974d43b82"
 
 faculty_list = [
     {"name": "Masa Kuroki", "id": "Q6SsuLgAAAAJ"},
