@@ -99,8 +99,6 @@ def scrape_entire_scholar_profile(api_key, profile_id, faculty_name):
 SCRAPERAPI_KEY = "f64115a7dae86ae150769602280d8e7f" #"774a6cccb40fa1ec293635a974d43b82"
 
 faculty_list = [
-    {"name": "Masa Kuroki", "id": "Q6SsuLgAAAAJ"},
-    {"name": "Sidd Bhambhwani", "id": "xpOekbMAAAAJ"},
     {"name": "Roc Huang", "id": "Jo7y9I8AAAAJ"},
     {"name": "Kevin Mason", "id": "XEpHGWAAAAAJ"},
     {"name": "John Narcum", "id": "0pA9ZlgAAAAJ"},
@@ -110,7 +108,8 @@ faculty_list = [
     {"name": "Aditya Limaye", "id": "0o-hM4oAAAAJ"},
     {"name": "Loretta Smith", "id": "4AEZrqMAAAAJ"},
     {"name": "David Pumphrey", "id": "BvVBHSAAAAAJ"},
-    {"name": "Matt Brown", "id": "LZacl3wAAAAJ"}
+    {"name": "Matt Brown", "id": "LZacl3wAAAAJ"},
+    {"name": "Masa Kuroki", "id": "Q6SsuLgAAAAJ"}
 ]
 
 # --- Main Processing Loop ---
