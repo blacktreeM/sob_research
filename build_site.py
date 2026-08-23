@@ -1,7 +1,7 @@
 from pathlib import Path
 import pandas as pd
 import json
-from datetime import datetime  # Added to grab the current date
+from datetime import datetime
 
 # Read the latest scraped data file
 data_path = Path(__file__).parent / "data.csv"
@@ -59,7 +59,7 @@ if "Faculty" in df.columns:
     # Filter out empty names
     faculty_counts = faculty_counts[faculty_counts['Faculty Member'].str.strip() != ""]
     
-    # Extract last name for sorting purposes (assumes 'First Last' or 'First Middle Last')
+    # Extract last name for sorting purposes
     faculty_counts['Last Name'] = faculty_counts['Faculty Member'].apply(
         lambda x: x.split()[-1].lower() if len(x.split()) > 0 else ""
     )
@@ -104,7 +104,6 @@ else:
     chart_data_rated = []
 
 # --- Generate Timestamp Text ---
-# Formats date nicely like: "June 01, 2026"
 last_updated_string = datetime.now().strftime("%B %d, %Y")
 
 # --- 4. Build HTML layout using clean replacement tokens ---
@@ -113,13 +112,17 @@ html_template = """<!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>School of Business Faculty Research</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <title>ATU School of Business Research</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: "Inter", sans-serif; background-color: #f8f9fa; color: #333; padding: 40px 20px; margin: 0; }
         .container { max-width: 1200px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); position: relative; }
-        h1 { color: #1a365d; border-bottom: 2px solid #e2e8f0; padding-bottom: 15px; margin-top: 0; margin-bottom: 30px; }
-        h2 { color: #2c5282; margin-top: 40px; margin-bottom: 20px; font-size: 1.4em; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px; }
+        h1 { color: #1a365d; border-bottom: 2px solid #e2e8f0; padding-bottom: 15px; margin-top: 0; margin-bottom: 30px; font-weight: 700; }
+        h2 { color: #2c5282; margin-top: 30px; margin-bottom: 20px; font-size: 1.4em; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px; }
+        .working-papers-list { margin-bottom: 30px; line-height: 1.8; color: #4a5568; }
+        .nav-links { margin-bottom: 25px; font-size: 1.05em; }
+        .nav-links a { color: #3182ce; text-decoration: none; font-weight: 600; }
+        .nav-links a:hover { text-decoration: underline; }
         .table-container { overflow-x: auto; margin-bottom: 40px; }
         table { width: 100%; border-collapse: collapse; min-width: 800px; margin-bottom: 10px; }
         .summary-table { min-width: 300px; max-width: 500px; }
@@ -135,10 +138,24 @@ html_template = """<!DOCTYPE html>
 </head>
 <body>
     <div class="container">
-        <h2>School of Business Faculty Published Papers (from Google Scholar)</h2>
+        <h1>ATU School of Business Research</h1>
+
+        <h2>Working Papers</h2>
+        <ul class="working-papers-list">
+            <li>Working paper title 1 (Authors, Year)</li>
+            <li>Working paper title 2 (Authors, Year)</li>
+            <li>Working paper title 3 (Authors, Year)</li>
+        </ul>
+
         <div class="nav-links">
-            <a href="ABDC.html"  target="_blank">ABDC Journal Quality List</a>
+            <a href="data_sources.html" target="_blank">Data sources for your research</a>
         </div>
+
+        <div class="nav-links">
+            <a href="ABDC.html" target="_blank">ABDC Journal Quality List</a>
+        </div>
+
+        <h2>Published Papers (from Google Scholar)</h2>
         <div class="table-container">
             <table>
                 <thead>
@@ -179,9 +196,6 @@ html_template = """<!DOCTYPE html>
         
         <div class="chart-container">
             <canvas id="publicationChart"></canvas>
-        </div>
-        <div class="nav-links">
-            <a href="data_sources.html"  target="_blank">Data sources for your research</a>
         </div>
         
         <div class="footer-note">
@@ -254,7 +268,7 @@ html_content = html_content.replace("__CHART_TITLE__", json.dumps(chart_title))
 html_content = html_content.replace("__CHART_LABELS__", json.dumps(chart_labels))
 html_content = html_content.replace("__CHART_DATA_TOTAL__", json.dumps(chart_data_total))
 html_content = html_content.replace("__CHART_DATA_RATED__", json.dumps(chart_data_rated))
-html_content = html_content.replace("__LAST_UPDATED__", last_updated_string) # Injects date string
+html_content = html_content.replace("__LAST_UPDATED__", last_updated_string)
 
 # Save out to public-facing docs folder context
 output_dir = Path(__file__).parent / "docs"
