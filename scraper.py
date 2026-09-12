@@ -136,7 +136,7 @@ df['Publication Year'] = pd.to_numeric(df['Publication Year'], errors='coerce')
 df_filtered = df[df['Publication Year'] >= 2022].copy()
 
 # ---------------------------------------------------------
-# Part 2: Extract Clean Journal Names & Drop Blanks
+# Part 2: Extract Clean Journal Names & Drop Blanks/Non-Peer-Reviewed
 # ---------------------------------------------------------
 print("Standardizing journal columns...")
 
@@ -144,6 +144,11 @@ def clean_journal_name(text):
     if pd.isna(text):
         return ""
     s = str(text).strip()
+    
+    # Exclude non-peer-reviewed outlets
+    if re.search(r'engaged\s+management\s+scholarship', s, flags=re.IGNORECASE):
+        return ""
+
     # Strip any trailing publication noise (volumes, issues, parentheses)
     split_pattern = r'[\s,]+(\d+|\b(vol|vols|issue|no|v|part|pt)\b\.?\s*\d+.*|\()'
     match = re.search(split_pattern, s, flags=re.IGNORECASE)
