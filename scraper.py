@@ -110,7 +110,8 @@ faculty_list = [
     {"name": "David Pumphrey", "id": "BvVBHSAAAAAJ"},
     {"name": "Matt Brown", "id": "LZacl3wAAAAJ"},
     {"name": "Masa Kuroki", "id": "Q6SsuLgAAAAJ"},
-    {"name": "Katelynn Hopson", "id": "yvnmbOUAAAAJ"}
+    {"name": "Katelynn Hopson", "id": "yvnmbOUAAAAJ"},
+    {"name": "Akram Khattab", "id": "eNEhe4AAAAAJ"}
 ]
 
 # --- Main Processing Loop ---
