@@ -146,6 +146,11 @@ def clean_journal_name(text):
         return ""
     s = str(text).strip()
     
+    # Exclude non-journal / specific titles
+    target_exclusion = "asynchronous video communication, and work experience"
+    if s.lower() == target_exclusion:
+        return ""
+    
     # Exclude non-peer-reviewed outlets
     if re.search(r'engaged\s+management\s+scholarship', s, flags=re.IGNORECASE):
         return ""
