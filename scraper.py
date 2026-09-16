@@ -146,9 +146,9 @@ def clean_journal_name(text):
         return ""
     s = str(text).strip()
     
-    # Exclude non-journal / specific titles
+    # Exclude specific non-journal titles or names containing "university"
     target_exclusion = "asynchronous video communication, and work experience"
-    if s.lower() == target_exclusion:
+    if s.lower() == target_exclusion or "university" in s.lower():
         return ""
     
     # Exclude non-peer-reviewed outlets
