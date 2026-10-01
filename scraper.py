@@ -1,4 +1,5 @@
-# f64115a7dae86ae150769602280d8e7f 
+# f64115a7dae86ae150769602280d8e7f (not good?) 
+# 7cb6a75b909c53b27c08483d8f3a5058
 # 774a6cccb40fa1ec293635a974d43b82
 import time
 import requests
@@ -96,7 +97,7 @@ def scrape_entire_scholar_profile(api_key, profile_id, faculty_name):
     return publications
 
 # --- Configuration ---
-SCRAPERAPI_KEY = "f64115a7dae86ae150769602280d8e7f" #"774a6cccb40fa1ec293635a974d43b82"
+SCRAPERAPI_KEY = "7cb6a75b909c53b27c08483d8f3a5058" #"774a6cccb40fa1ec293635a974d43b82"
 
 faculty_list = [
     {"name": "Roc Huang", "id": "Jo7y9I8AAAAJ"},
