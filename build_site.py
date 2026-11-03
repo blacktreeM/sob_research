@@ -141,15 +141,7 @@ html_template = """<!DOCTYPE html>
     <div class="container">
         <h1>ATU School of Business Research</h1>
 
-        <h2>Working Papers</h2>
-        <ul class="working-papers-list">
-            <li>The Impact of Minimum Wage Increases on Medical Debt (Wei and Kuroki)</li>
-            <li>The Impact of Medicaid Restrictions on Medical Debt: Evidence from Retroactive Eligibility Cuts and Work Requirements in Arkansas (Smith and Kuroki)</li>
-        </ul>
-
-        <div class="impact-statement">
-            <strong>Societal Impact Statement:</strong> The Arkansas Tech University LeMoyne Smith School of Business will work to reduce inequalities and promote economic growth for our students and campus and community members by engaging in service-learning projects, experiential learning opportunities, faculty outreach, and community partnerships.
-        </div>
+       
 
         <div class="nav-links">
             <a href="data_sources.html" target="_blank">Data sources for your research</a>
